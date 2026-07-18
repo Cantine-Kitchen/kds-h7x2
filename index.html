@@ -1,28 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cantine</title>
+  <meta charset="UTF-8">
+  <title>Cantine Portal</title>
+  
+  <!-- Hides it from Google Search -->
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Tells iOS to hide Safari and go full screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- Your custom logo for the home screen -->
+  <link rel="apple-touch-icon" href="cantine logo yello 1.png">
+  
+  <style>
+    /* Dark Mode & Mobile Friendly Styles */
+    body { background-color: #121212; color: #ffffff; font-family: -apple-system, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .hidden { display: none !important; }
     
-    <!-- Hides it from Google Search -->
-    <meta name="robots" content="noindex, nofollow">
+    /* Auth Screen */
+    #auth-screen { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .pin-container { text-align: center; padding: 30px; background: #1e1e1e; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    #pin-input { font-size: 2rem; letter-spacing: 15px; text-align: center; width: 120px; padding: 10px; border-radius: 8px; border: none; background: #333; color: #fff; outline: none; margin-top: 15px; }
+    #error-msg { color: #ff5252; margin-top: 15px; font-weight: bold; }
+
+    /* Dashboard Screen */
+    #dashboard-screen { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+    header { padding: 15px 20px; background: #1e1e1e; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; flex-shrink: 0; }
+    header h1 { margin: 0; font-size: 1.2rem; }
+    #logout-btn { background: #ff5252; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     
-    <!-- Tells iOS to hide Safari and go full screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    /* Navigation Tabs */
+    .tabs { display: flex; overflow-x: auto; background: #1e1e1e; padding: 10px; gap: 10px; flex-shrink: 0; }
+    .tab-btn { flex: 1; min-width: 80px; padding: 10px; background: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+    .tab-btn.active { background: #4caf50; font-weight: bold; }
     
-    <!-- Your custom logo for the home screen -->
-    <link rel="apple-touch-icon" href="cantine logo yello 1.png">
-    
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; background-color: #121212; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-    </style>
+    /* iFrame Containers */
+    .app-container { flex: 1; position: relative; width: 100%; height: 100%; }
+    .app-iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+  </style>
 </head>
 <body>
 
-    <!-- Pulls in your Apps Script Hub -->
-    <iframe src="https://script.google.com/macros/s/AKfycbyqqFWnIxt341dH3cI6syr9scOdvC__4ULkv2S4n-Wtiho8QII6AdePrsxzqqx9hz5V/exec"></iframe>
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen">
+    <div class="pin-container">
+      <!-- Your custom logo -->
+      <img src="cantine logo yello 1.png" alt="Cantine Logo" style="max-width: 200px; display: block; margin: 0 auto;">
+      
+      <input type="password" id="pin-input" maxlength="3" inputmode="numeric" pattern="[0-9]*" placeholder="•••">
+      <p id="error-msg" class="hidden">Invalid PIN</p>
+    </div>
+  </div>
 
+  <!-- MAIN DASHBOARD -->
+  <div id="dashboard-screen" class="hidden">
+    <header>
+      <h1 id="welcome-text">Welcome, Chef</h1>
+      <button id="logout-btn">Logout</button>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-target="prep-frame">Prep</button>
+      <button class="tab-btn" data-target="order-frame">Ordering</button>
+      <button class="tab-btn" data-target="bulletin-frame">Shift Log</button>
+    </nav>
+
+    <main class="app-container">
+      <!-- PASTE YOUR INDIVIDUAL APPS SCRIPT WEB APP URLS HERE -->
+      <iframe id="prep-frame" class="app-iframe" data-src="PASTE_PREP_APP_URL_HERE"></iframe>
+      <iframe id="order-frame" class="app-iframe hidden" data-src="PASTE_ORDERING_APP_URL_HERE"></iframe>
+      <iframe id="bulletin-frame" class="app-iframe hidden" data-src="PASTE_BULLETIN_APP_URL_HERE"></iframe>
+    </main>
+  </div>
+
+  <script>
+    // --- PASTE YOUR AUTH SCRIPT URL BELOW ---
+    const AUTH_URL = "PASTE_YOUR_AUTH_WEB_APP_URL_HERE"; 
+    // ----------------------------------------
+
+    const authScreen = document.getElementById('auth-screen');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+    const pinInput = document.getElementById('pin-input');
+    const errorMsg = document.getElementById('error-msg');
+    const welcomeText = document.getElementById('welcome-text');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    pinInput.addEventListener('input', async (e) => {
+      if (e.target.value.length === 3) {
+        const pin = e.target.value;
+        pinInput.disabled = true; 
+        
+        try {
+          const response = await fetch(AUTH_URL, {
+            method: 'POST',
+            body: JSON.stringify({ pin: pin })
+          });
+          
+          const result = await response.json();
+          
+          if (result.valid) {
+            welcomeText.innerText = `Welcome, ${result.name}`;
+            authScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
+            
+            // Load iframes only after successful login
+            document.querySelectorAll('.app-iframe').forEach(iframe => {
+              if (!iframe.src && iframe.getAttribute('data-src')) {
+                iframe.src = iframe.getAttribute('data-src');
+              }
+            });
+          } else {
+            errorMsg.innerText = "Invalid PIN";
+            errorMsg.classList.remove('hidden');
+          }
+        } catch (err) {
+          errorMsg.innerText = "Connection Failed";
+          errorMsg.classList.remove('hidden');
+        }
+        
+        pinInput.value = '';
+        pinInput.disabled = false;
+        pinInput.focus();
+      }
+    });
+
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.app-iframe').forEach(frame => frame.classList.add('hidden'));
+        
+        button.classList.add('active');
+        document.getElementById(button.getAttribute('data-target')).classList.remove('hidden');
+      });
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      pinInput.value = '';
+      dashboardScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+    });
+  </script>
 </body>
 </html>
