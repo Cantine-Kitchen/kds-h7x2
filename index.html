@@ -69,7 +69,7 @@
     </nav>
 
     <main class="app-container">
-      <!-- PASTE YOUR INDIVIDUAL APPS SCRIPT WEB APP URLS HERE -->
+      <!-- INDIVIDUAL APPS SCRIPT WEB APP URLS -->
       <iframe id="prep-frame" class="app-iframe" data-src="https://script.google.com/macros/s/AKfycbwj2Zxir-vseT_fQLi5UsPYMewgY2La_IFRdPGkRGoRvsxJwRp25i8z2ARx1FzpyD0xsQ/exec"></iframe>
       <iframe id="order-frame" class="app-iframe hidden" data-src="https://script.google.com/macros/s/AKfycbz71Ie_-uvj1NCK9JTTYjNS27dBBng8HMNPN6Z68nBhULjntUH6tHA-Or_3uOZOJcFb/exec"></iframe>
       <iframe id="recipe-frame" class="app-iframe hidden" data-src="https://script.google.com/macros/s/AKfycbx5XzMfrjH6srubdhn4fm7MVj-xE3-M44ZS6yMR5tbuCFGkpr18AYRYoSNobqZqHp0q/exec"></iframe>
@@ -77,9 +77,9 @@
   </div>
 
   <script>
-    // --- PASTE YOUR AUTH SCRIPT URL BELOW ---
+    // --- AUTH SCRIPT URL ---
     const AUTH_URL = "https://script.google.com/macros/s/AKfycbzbO_iseQOGr4WgPRO0Rnd47Fs869OiZ6ikmVLNyxEc1mRiM8royH75xMjO-n9oZFKp/exec"; 
-    // ----------------------------------------
+    // -----------------------
 
     const authScreen = document.getElementById('auth-screen');
     const dashboardScreen = document.getElementById('dashboard-screen');
@@ -94,13 +94,13 @@
         pinInput.disabled = true; 
         
         try {
-         const response = await fetch(AUTH_URL, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8",
-      },
-      body: JSON.stringify({ pin: pin })
-    });
+          const response = await fetch(AUTH_URL, {
+            method: 'POST',
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({ pin: pin })
+          });
           
           const result = await response.json();
           
