@@ -94,10 +94,13 @@
         pinInput.disabled = true; 
         
         try {
-          const response = await fetch(AUTH_URL, {
-            method: 'POST',
-            body: JSON.stringify({ pin: pin })
-          });
+         const response = await fetch(AUTH_URL, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify({ pin: pin })
+    });
           
           const result = await response.json();
           
