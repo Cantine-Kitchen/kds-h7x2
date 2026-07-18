@@ -64,21 +64,21 @@
 
     <nav class="tabs">
       <button class="tab-btn active" data-target="prep-frame">Prep</button>
-      <button class="tab-btn" data-target="order-frame">Ordering</button>
-      <button class="tab-btn" data-target="bulletin-frame">Shift Log</button>
+      <button class="tab-btn" data-target="order-frame">Order</button>
+      <button class="tab-btn" data-target="recipe-frame">Recipes</button>
     </nav>
 
     <main class="app-container">
       <!-- PASTE YOUR INDIVIDUAL APPS SCRIPT WEB APP URLS HERE -->
-      <iframe id="prep-frame" class="app-iframe" data-src="PASTE_PREP_APP_URL_HERE"></iframe>
-      <iframe id="order-frame" class="app-iframe hidden" data-src="PASTE_ORDERING_APP_URL_HERE"></iframe>
-      <iframe id="bulletin-frame" class="app-iframe hidden" data-src="PASTE_BULLETIN_APP_URL_HERE"></iframe>
+      <iframe id="prep-frame" class="app-iframe" data-src="https://script.google.com/macros/s/AKfycbwj2Zxir-vseT_fQLi5UsPYMewgY2La_IFRdPGkRGoRvsxJwRp25i8z2ARx1FzpyD0xsQ/exec"></iframe>
+      <iframe id="order-frame" class="app-iframe hidden" data-src="https://script.google.com/macros/s/AKfycbz71Ie_-uvj1NCK9JTTYjNS27dBBng8HMNPN6Z68nBhULjntUH6tHA-Or_3uOZOJcFb/exec"></iframe>
+      <iframe id="recipe-frame" class="app-iframe hidden" data-src="https://script.google.com/macros/s/AKfycbx5XzMfrjH6srubdhn4fm7MVj-xE3-M44ZS6yMR5tbuCFGkpr18AYRYoSNobqZqHp0q/exec"></iframe>
     </main>
   </div>
 
   <script>
     // --- PASTE YOUR AUTH SCRIPT URL BELOW ---
-    const AUTH_URL = "PASTE_YOUR_AUTH_WEB_APP_URL_HERE"; 
+    const AUTH_URL = "https://script.google.com/macros/s/AKfycbzbO_iseQOGr4WgPRO0Rnd47Fs869OiZ6ikmVLNyxEc1mRiM8royH75xMjO-n9oZFKp/exec"; 
     // ----------------------------------------
 
     const authScreen = document.getElementById('auth-screen');
