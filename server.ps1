@@ -33,9 +33,11 @@ while ($listener.IsListening) {
         }
 
         $response.ContentLength64 = $content.Length
-        $response.OutputStream.Write($content, 0, $content.Length)
+        try {
+            $response.OutputStream.Write($content, 0, $content.Length)
+        } catch {}
     } else {
         $response.StatusCode = 404
     }
-    $response.OutputStream.Close()
+    try { $response.OutputStream.Close() } catch {}
 }
