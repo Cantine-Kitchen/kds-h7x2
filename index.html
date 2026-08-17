@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cantine Kitchen Hub</title>
+  
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <link rel="apple-touch-icon" href="cantine logo yello 1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- AUTH PIN LOGIN SCREEN -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">🔪</div>
+      <div class="auth-title">Cantine Hub</div>
+      <div class="auth-subtitle">Enter your 3-digit PIN to access</div>
+      
+      <input type="password" id="pin-input" class="pin-input" maxlength="3" inputmode="numeric" pattern="[0-9]*" placeholder="•••" autofocus>
+      <div id="auth-error" class="auth-error hidden">Invalid PIN</div>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION SHELL -->
+  <div id="app-shell" class="hidden">
+    
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="hamburger-btn" onclick="toggleNav(true)">☰</button>
+        <div class="app-title" id="module-title">Command Center</div>
+      </div>
+      <div class="top-bar-center" id="global-header-clock" onclick="openKitchenTimersModal()" title="Tap to open Kitchen Timers">
+        <span style="font-size:1.1rem;">🕒</span>
+        <span id="header-clock-date-text">Loading clock...</span>
+        <span id="header-timer-badge" class="header-timer-badge hidden">0 ⏱️</span>
+      </div>
+      <div class="chef-badge" id="chef-badge">
+        <span>👨‍🍳</span>
+        <span id="user-name-display">Chef</span>
+        <span class="logout-link" onclick="logout()">Logout</span>
+      </div>
+    </header>
+
+    <!-- SLIDE-OUT SIDE NAVIGATION -->
+    <nav id="side-nav" class="side-nav">
+      <button class="close-nav-btn" onclick="toggleNav(false)">&times;</button>
+      <div class="nav-item active" id="nav-dashboard" onclick="switchModule('dashboard', 'Command Center')">🏠 Command Center</div>
+      <div class="nav-item" id="nav-prep" onclick="switchModule('prep', 'Prep Board')">🔪 Prep Board</div>
+      <div class="nav-item" id="nav-order" onclick="switchModule('order', 'Inventory & Orders')">📦 Inventory & Orders</div>
+      <div class="nav-item" id="nav-recipe" onclick="switchModule('recipe', 'Recipe Vault')">📖 Recipe Vault</div>
+      <div class="nav-item" id="nav-schedule" onclick="switchModule('schedule', 'Shift Schedule')">📅 Shift Schedule</div>
+      <div class="nav-item" id="nav-menu" onclick="switchModule('menu', 'Menus')">🍽️ Menus</div>
+      <div class="nav-item" id="nav-cleaning" onclick="switchModule('cleaning', 'Cleaning Tracker')">🧹 Cleaning Tracker</div>
+      <div class="nav-item" id="nav-help" onclick="showHelpModal()">❓ Help & Guides</div>
+    </nav>
+    <div id="nav-overlay" class="nav-overlay" onclick="toggleNav(false)"></div>
+
+    <!-- MAIN MODULE CONTENT AREA -->
+    <main class="main-content">
+
+      <!-- MODULE 0: COMMAND CENTER DASHBOARD -->
+      <section id="module-dashboard-sec">
+        <!-- DASHBOARD HERO BANNER -->
+        <div class="dash-hero">
+          <div class="dash-hero-text">
+            <h1 class="dash-greeting" id="dash-greeting-text">Welcome to Cantine Hub</h1>
+            <div class="dash-subtitle" id="dash-date-text">Loading today's shift overview...</div>
+          </div>
+          <button class="btn btn-secondary" onclick="manualRefreshData()" style="padding: 10px 18px; font-size: 1.1rem;">⟳ Sync Data</button>
+        </div>
+
+        <!-- 6 SUBAPP LAUNCHER TILES -->
+        <div class="dash-section-title">🚀 Kitchen Applications</div>
+        <div class="dash-launcher-grid">
+          <div class="dash-tile" onclick="switchModule('prep', 'Prep Board')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">🔪</span>
+              <span class="dash-tile-badge badge-warning" id="tile-prep-badge">0 Pending</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Prep Board</div>
+              <div class="dash-tile-sub" id="tile-prep-sub">Live KDS Prep List</div>
+            </div>
+          </div>
+
+          <div class="dash-tile" onclick="switchModule('order', 'Inventory & Orders')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">📦</span>
+              <span class="dash-tile-badge badge-blue" id="tile-order-badge">131 Items</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Inventory & Orders</div>
+              <div class="dash-tile-sub" id="tile-order-sub">Suppliers & Stock</div>
+            </div>
+          </div>
+
+          <div class="dash-tile" onclick="switchModule('recipe', 'Recipe Vault')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">📖</span>
+              <span class="dash-tile-badge badge-gold" id="tile-recipe-badge">211 Recipes</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Recipe Vault</div>
+              <div class="dash-tile-sub" id="tile-recipe-sub">Specs & Method Search</div>
+            </div>
+          </div>
+
+          <div class="dash-tile" onclick="switchModule('schedule', 'Shift Schedule')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">📅</span>
+              <span class="dash-tile-badge badge-purple" id="tile-sched-badge">Working Today</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Shift Schedule</div>
+              <div class="dash-tile-sub" id="tile-sched-sub">Staff Roster & Rota</div>
+            </div>
+          </div>
+
+          <div class="dash-tile" onclick="switchModule('menu', 'Menus')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">🍽️</span>
+              <span class="dash-tile-badge badge-green" id="tile-menu-badge">Active Menu</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Weekly Menus</div>
+              <div class="dash-tile-sub" id="tile-menu-sub">Daily Specials & Items</div>
+            </div>
+          </div>
+
+          <div class="dash-tile" onclick="switchModule('cleaning', 'Cleaning Tracker')">
+            <div class="dash-tile-top">
+              <span class="dash-tile-icon">🧹</span>
+              <span class="dash-tile-badge badge-orange" id="tile-clean-badge">Duty List</span>
+            </div>
+            <div class="dash-tile-info">
+              <div class="dash-tile-title">Cleaning Tracker</div>
+              <div class="dash-tile-sub" id="tile-clean-sub">Duty Checklists</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMMAND CENTER WIDGETS GRID -->
+        <div class="dash-section-title" style="margin-top: 30px;">📊 Live Kitchen Operations</div>
+        <div class="dash-widget-grid">
+          
+          <!-- WIDGET 1: SPECIALS & INSTAGRAM SHOWCASE -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-icon">🌟</span>
+              <h3 class="dash-card-title">Daily Specials & Social Feed</h3>
+            </div>
+            <div id="dash-specials-container" class="dash-specials-grid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- WIDGET 2: CLEANING PROGRESS TRACKER -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dash-card-icon">🧹</span>
+                <h3 class="dash-card-title">Shift Cleaning Progress</h3>
+              </div>
+              <button class="btn btn-secondary" style="font-size:0.8rem; padding:4px 10px;" onclick="switchModule('cleaning', 'Cleaning Tracker')">Full Checklist ➔</button>
+            </div>
+            <div id="dash-cleaning-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- WIDGET 3: 86 BOARD -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dash-card-icon">🚫</span>
+                <h3 class="dash-card-title">86 Board (Out of Stock)</h3>
+              </div>
+              <span class="dash-card-badge" id="eightysix-count-badge">0 Items</span>
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-bottom:15px;">
+              <input type="text" id="eightysix-input" class="search-input" placeholder="Type item to 86 (e.g. Ribeye, Cream)..." style="flex:1; font-size:1rem; padding:10px;" onkeydown="if(event.key==='Enter') addEightySixItem()">
+              <button class="btn btn-danger" onclick="addEightySixItem()">+ 86</button>
+            </div>
+            
+            <div id="eightysix-list-container" class="eightysix-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- WIDGET 4: KITCHEN BULLETIN BOARD -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dash-card-icon">💬</span>
+                <h3 class="dash-card-title">Kitchen Bulletin & Pass-down</h3>
+              </div>
+              <button class="btn btn-warning" style="font-size:0.8rem; padding:4px 10px;" onclick="openNoteModal()">+ Post Note</button>
+            </div>
+            <div id="bulletin-board-container" class="bulletin-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- WIDGET 5: VIP & BIG RESERVATIONS -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dash-card-icon">⭐</span>
+                <h3 class="dash-card-title">VIP & Big Reservations</h3>
+              </div>
+              <button class="btn btn-success" style="font-size:0.8rem; padding:4px 10px;" onclick="openVipNoteModal()">+ Add Reservation</button>
+            </div>
+            <div id="vip-notes-container" class="vip-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- WIDGET 6: TODAY'S STAFF ROSTA -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dash-card-icon">📅</span>
+                <h3 class="dash-card-title">Today's Staff Rota</h3>
+              </div>
+              <button class="btn btn-secondary" style="font-size:0.8rem; padding:4px 10px;" onclick="switchModule('schedule', 'Shift Schedule')">Full Rota ➔</button>
+            </div>
+            <div id="dash-schedule-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MODULE 1: PREP BOARD & LIST BUILDER -->
+      <section id="module-prep-sec" class="hidden">
+        <div class="btn-group" id="prep-actions">
+          <button class="btn btn-success" onclick="toggleBuilderView(true)">📝 Create List</button>
+          <button class="btn btn-warning" onclick="openNoteModal()">💬 Leave Note</button>
+          <button class="btn btn-primary" onclick="openAddItemModal()">+ Add Item</button>
+          <button class="btn btn-secondary" onclick="clearCompletedPrep()">🧹 Clear Done</button>
+          <button class="btn btn-danger" onclick="clearEntirePrepBoard()">🗑️ Clear Board</button>
+          <button id="refresh-btn" class="btn" onclick="manualRefreshData()">⟳ Refresh</button>
+        </div>
+
+        <!-- KDS LIVE PREP BOARD VIEW -->
+        <div id="board-view">
+          <div id="prep-loading" style="text-align:center; font-size:1.5rem; color:#888;">Syncing Live Prep Items...</div>
+          <div id="prep-cat-pills" class="filter-pills" style="margin-bottom:15px;"></div>
+          <div id="prep-container"></div>
+        </div>
+
+        <!-- MANAGER LIST BUILDER VIEW -->
+        <div id="builder-view" class="hidden" style="max-width: 900px; margin: 0 auto;">
+          <div class="btn-group">
+            <button class="btn btn-warning" onclick="clearBuilderSelections()">🧹 Clear All Selections</button>
+            <button class="btn btn-danger" onclick="toggleBuilderView(false)">✖ Cancel Builder</button>
+          </div>
+
+          <!-- Passdown Notes Inbox -->
+          <div id="passdown-inbox" class="message-card hidden">
+            <h3 style="color: var(--accent-gold);">💬 Passdown Notes</h3>
+            <ul id="passdown-notes-list" style="font-size:1.2rem; line-height: 1.6; padding-left: 20px;"></ul>
+            <button class="btn btn-warning" onclick="clearPassdownNotes()">✖ Dismiss Notes</button>
+          </div>
+
+          <div id="builder-items-container" style="margin-top:20px;"></div>
+
+          <div class="message-card" style="margin-top:30px;">
+            <label style="font-size:1.2rem; font-weight:bold; color:var(--accent-blue);">Add Custom Items (Comma Separated)</label>
+            <textarea id="builder-custom-input" class="msg-textarea" style="height:80px; margin-top:10px;" placeholder="e.g. extra queso, prep cilantro..."></textarea>
+            <button id="submit-builder-btn" class="btn btn-success" style="width:100%; font-size:1.3rem; margin-top:15px;" onclick="submitPrepListBuilder()">Submit Prep List</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODULE 2: INVENTORY & ORDERS -->
+      <section id="module-order-sec" class="hidden">
+        <div id="order-screen">
+          <div class="order-name-card">
+            <label style="display:block; font-weight:bold; font-size:1.1rem; margin-bottom:8px; color:var(--accent-gold);">
+              Who is submitting this order? (Leave blank if you are Head Chef)
+            </label>
+            <input type="text" id="cook-name-input" class="search-input" style="padding:12px; font-size:1.1rem;" placeholder="Enter your name (optional)...">
+          </div>
+
+          <div id="inventory-list-container"></div>
+          
+          <button id="submit-order-btn" class="btn btn-success" style="width:100%; margin-top:25px; padding:18px; font-size:1.4rem;" onclick="generateSupplierOrders()">
+            Submit & Generate Supplier Messages
+          </button>
+        </div>
+
+        <!-- GENERATED SUPPLIER MESSAGES DISPATCH SCREEN -->
+        <div id="order-ready-screen" class="hidden">
+          <h1 style="text-align:center; color:#fff;">Order Messages Ready</h1>
+          <div id="supplier-messages-container"></div>
+          <button class="btn btn-primary" style="width:100%; margin-top:30px; padding:16px;" onclick="resetOrderScreen()">Start New Order</button>
+        </div>
+      </section>
+
+      <!-- MODULE 3: RECIPE VAULT -->
+      <section id="module-recipe-sec" class="hidden">
+        <input type="text" id="recipe-search" class="search-input" placeholder="Search recipe name, ingredients, station, or keywords..." onkeyup="filterRecipeVault()">
+        
+        <!-- TAXONOMY FILTERS -->
+        <div style="margin-top: 15px;">
+          <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Station Filters</div>
+          <div id="station-pills-container" class="filter-pills"></div>
+        </div>
+
+        <div style="margin-top: 10px;">
+          <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Workflow Type</div>
+          <div id="workflow-pills-container" class="filter-pills"></div>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-size: 0.85rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Category</div>
+            <div id="category-pills-container" class="filter-pills" style="margin-bottom: 0;"></div>
+          </div>
+          
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-muted); font-size: 0.95rem; background: #252525; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <input type="checkbox" id="show-legacy-checkbox" onchange="toggleLegacyRecipes(this.checked)" style="width: 18px; height: 18px; accent-color: var(--accent-gold);">
+            Show Legacy / Archived Recipes
+          </label>
+        </div>
+        
+        <div id="recipe-grid-container" class="recipe-grid"></div>
+      </section>
+
+      <!-- MODULE 4: SHIFT SCHEDULE -->
+      <section id="module-schedule-sec" class="hidden">
+        <h2 style="text-align:center; text-transform:uppercase; letter-spacing:2px;">Weekly Shift Schedule</h2>
+        <div id="schedule-matrix-container" style="overflow-x:auto;"></div>
+      </section>
+
+      <!-- MODULE 5: MENUS -->
+      <section id="module-menu-sec" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+          <div>
+            <h2 style="margin:0; color:var(--accent-gold);">Cantine Weekly Menus</h2>
+            <div style="color:var(--text-muted); font-size:1.1rem; margin-top:4px;">Browse weekly food & drink specials, daily slips, and main menus</div>
+          </div>
+          <div id="menu-header-actions" style="display:flex; gap:12px; flex-wrap:wrap;"></div>
+        </div>
+
+        <div class="filter-pills" style="margin-bottom:20px; flex-wrap:wrap;">
+          <button class="filter-pill active" id="btn-menu-tab-food" onclick="switchMenuSubTab('food')">📖 Main Menu: Food</button>
+          <button class="filter-pill" id="btn-menu-tab-drinks" onclick="switchMenuSubTab('drinks')">🍷 Main Menu: Drinks</button>
+          <button class="filter-pill" id="btn-menu-tab-mon" onclick="switchMenuSubTab('mon')">🍗 Mon: 1 LB Wings</button>
+          <button class="filter-pill" id="btn-menu-tab-tue" onclick="switchMenuSubTab('tue')">🌮 Tue: Tacos</button>
+          <button class="filter-pill" id="btn-menu-tab-wed" onclick="switchMenuSubTab('wed')">🍔 Wed: Burger Day</button>
+          <button class="filter-pill" id="btn-menu-tab-thu" onclick="switchMenuSubTab('thu')">🍷 Thu: Wine Flight Mat</button>
+          <button class="filter-pill" id="btn-menu-tab-weekend" onclick="switchMenuSubTab('weekend')">🥂 Fri-Sun: Weekend Feature</button>
+          <button class="filter-pill" id="btn-menu-tab-cutoutdrinks" onclick="switchMenuSubTab('cutoutdrinks')">🍹 Back Slips: Drink Specials</button>
+        </div>
+
+        <div id="menu-editor-container"></div>
+      </section>
+
+      <!-- MODULE 6: KITCHEN CLEANING TRACKER -->
+      <section id="module-cleaning-sec" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+          <div>
+            <h2 style="margin:0; color:var(--accent-gold); text-transform:uppercase;">🧹 Kitchen Cleaning Tracker</h2>
+            <div style="color:var(--text-muted); font-size:1.1rem; margin-top:4px;">Weekly Maintenance Log, Daily Downtime "Busy Work" & Shift Completion Logs</div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-warning" style="font-size:1.1rem; padding:12px 18px;" onclick="resetShiftCleaning()">🔄 Reset Shift Checklist</button>
+          </div>
+        </div>
+
+        <!-- CLEANING SUB-TABS -->
+        <div class="filter-pills" style="margin-bottom:20px; flex-wrap:wrap;">
+          <button class="filter-pill active" id="btn-clean-tab-today" onclick="switchCleaningSubTab('today')">⭐ Today's Shift Focus</button>
+          <button class="filter-pill" id="btn-clean-tab-daily" onclick="switchCleaningSubTab('daily')">📋 Daily Downtime Busy Work</button>
+          <button class="filter-pill" id="btn-clean-tab-deep" onclick="switchCleaningSubTab('deep')">🧼 Weekly Deep Clean Matrix</button>
+          <button class="filter-pill" id="btn-clean-tab-history" onclick="switchCleaningSubTab('history')">📜 Audit & Completion History</button>
+        </div>
+
+        <!-- PROGRESS BAR OVERVIEW -->
+        <div id="cleaning-progress-container" style="background:var(--card-bg); padding:16px 20px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:25px;"></div>
+
+        <!-- CLEANING SUB-MODULE CONTAINERS -->
+        <div id="cleaning-container"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- PRINT CONTAINER (RENDERED DYNAMICALLY FOR WINDOW.PRINT) -->
+  <div id="print-area"></div>
+
+  <!-- MID-SHIFT ADD ITEM MODAL -->
+  <div id="modal-add-item" class="modal-overlay">
+    <div class="auth-card">
+      <h2 style="margin-top:0;">Add Mid-Shift Item</h2>
+      <input type="text" id="new-item-input" class="search-input" style="font-size:1.3rem; padding:12px; text-align:center;" placeholder="e.g. Caesar Dressing">
+      <div class="btn-group" style="margin-top:20px;">
+        <button class="btn btn-danger" onclick="closeModal('modal-add-item')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitMidShiftItem()">Add to Board</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAVE PASSDOWN NOTE MODAL -->
+  <div id="modal-leave-note" class="modal-overlay">
+    <div class="auth-card">
+      <h2 style="margin-top:0;">Leave Passdown Note</h2>
+      <input type="text" id="new-note-input" class="search-input" style="font-size:1.3rem; padding:12px; text-align:center;" placeholder="e.g. Start meatballs ASAP">
+      <div class="btn-group" style="margin-top:20px;">
+        <button class="btn btn-danger" onclick="closeModal('modal-leave-note')">Cancel</button>
+        <button class="btn btn-warning" onclick="submitPassdownNote()">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN RECIPE READER MODAL -->
+  <div id="modal-recipe-reader" class="modal-overlay">
+    <div class="modal-header">
+      <h2 id="recipe-modal-title" style="font-size:2.2rem; margin:0; color:#fff;">Recipe Title</h2>
+      <button class="btn btn-danger" onclick="closeModal('modal-recipe-reader')">BACK</button>
+    </div>
+    
+    <div id="recipe-modal-notes" class="modal-notes-alert hidden"></div>
+
+    <div class="modal-grid-2col">
+      <div>
+        <h3 style="color:var(--accent-blue); text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:8px;">Ingredients</h3>
+        <div id="recipe-modal-ingredients" style="font-size:1.3rem; line-height:1.6; white-space:pre-wrap;"></div>
+      </div>
+      <div>
+        <h3 style="color:var(--accent-blue); text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:8px;">Method</h3>
+        <div id="recipe-modal-method" style="font-size:1.3rem; line-height:1.6; white-space:pre-wrap;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP & USER GUIDES MODAL -->
+  <div id="modal-help" class="modal-overlay">
+    <div style="max-width:800px; margin:0 auto; color:#fff;">
+      <button class="btn btn-danger" style="width:100%; margin-bottom:20px;" onclick="closeModal('modal-help')">CLOSE HELP</button>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showGuideTab('prep')">Prep Guide</button>
+        <button class="btn btn-success" onclick="showGuideTab('order')">Ordering Guide</button>
+        <button class="btn btn-warning" onclick="showGuideTab('recipe')">Recipes Guide</button>
+      </div>
+
+      <!-- Prep Guide -->
+      <div id="guide-prep-content">
+        <h2 style="color:var(--accent-blue);">Kitchen Prep Board & List Builder</h2>
+        <p style="font-size:1.2rem; line-height:1.6;">
+          <strong>Color Coding:</strong><br>
+          🔴 <strong>Red (86'd):</strong> Priority high-urgency prep needed ASAP.<br>
+          🟠 <strong>Orange (Start):</strong> Multi-day prep tasks.<br>
+          🟡 <strong>Yellow (Check First):</strong> Verify existing quantity level before cooking.<br>
+          🟣 <strong>Purple (Brunch):</strong> Weekend brunch items.<br>
+          🔵 <strong>Blue (Custom):</strong> Mid-shift on-the-fly items.<br>
+          🟢 <strong>Green Strike-through:</strong> Completed.
+        </p>
+        <p style="font-size:1.2rem; line-height:1.6;">
+          <strong>Yellow Check First Loop:</strong><br>
+          1st tap: Resolves check state to standard.<br>
+          2nd tap: Marks item as done.<br>
+          3rd tap: Resets item back to Check First.
+        </p>
+      </div>
+
+      <!-- Order Guide -->
+      <div id="guide-order-content" class="hidden">
+        <h2 style="color:var(--accent-green);">Inventory & Supplier Ordering</h2>
+        <p style="font-size:1.2rem; line-height:1.6;">
+          1. Select quantities for items below par.<br>
+          2. Enter optional submitter name if you are covering line.<br>
+          3. Tap <strong>Submit & Generate Supplier Messages</strong>.<br>
+          4. Tap 📱 <strong>Text</strong> or 📧 <strong>Email</strong> to dispatch directly to reps!
+        </p>
+      </div>
+
+      <!-- Recipe Guide -->
+      <div id="guide-recipe-content" class="hidden">
+        <h2 style="color:var(--accent-gold);">Recipe Vault</h2>
+        <p style="font-size:1.2rem; line-height:1.6;">
+          Search by dish name or ingredient. Filter by department pill buttons. Tap any card for full specs view!
+        </p>
+      </div>
+
+      <!-- Backup Tools -->
+      <div style="margin-top:30px; padding-top:20px; border-top:1px solid #333; text-align:center;">
+        <h3 style="color:var(--accent-gold);">💾 Data Backup & Restore</h3>
+        <div style="display:flex; gap:15px; justify-content:center;">
+          <button class="btn btn-success" onclick="exportDataBackup()">📥 Export Backup File</button>
+          <button class="btn btn-warning" onclick="document.getElementById('import-file-input').click()">📤 Restore from Backup</button>
+          <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importDataBackup(event)">
+        </div>
+      </div>
+
+      <!-- Real-Time Cloud Sync Settings -->
+      <div style="margin-top:25px; padding-top:20px; border-top:1px solid #333; text-align:center;">
+        <h3 style="color:var(--accent-blue);">🌐 Real-Time Cloud Sync Settings</h3>
+        <p style="color:var(--text-muted); font-size:1rem; margin-bottom:12px;">
+          Paste your Google Apps Script Web App URL below to sync live prep list updates across all phones & PCs in real-time!
+        </p>
+        <div style="max-width:550px; margin:0 auto; display:flex; flex-direction:column; gap:10px;">
+          <input type="text" id="backend-url-input" class="search-input" style="font-size:0.95rem; padding:10px;" placeholder="https://script.google.com/macros/s/.../exec">
+          <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn btn-primary" style="flex:1;" onclick="saveBackendUrlFromUI()">💾 Save Cloud Sync URL</button>
+            <button class="btn btn-danger" style="padding:10px 16px;" onclick="clearBackendUrlUI()">Clear URL</button>
+          </div>
+          <div id="cloud-sync-status" style="font-size:0.95rem; font-weight:bold; color:var(--text-dim); margin-top:6px;">
+            ⚪ Storage Mode: Local Device Only
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT INVENTORY ITEM MODAL -->
+  <div id="modal-edit-inventory" class="modal-overlay">
+    <div style="max-width:600px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:12px; border:1px solid var(--border-color); max-height:90vh; overflow-y:auto;">
+      <h2 id="inv-modal-header" style="color:var(--accent-gold); margin-top:0;">Edit Inventory Item</h2>
+      <input type="hidden" id="inv-edit-index">
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted);">Item Name:</label>
+      <input type="text" id="inv-edit-name" class="form-control" placeholder="e.g. Coopers American">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+        <div>
+          <label style="color:var(--text-muted);">Category:</label>
+          <select id="inv-edit-category" class="form-control">
+            <option value="BAKERY & PASTA">BAKERY & PASTA</option>
+            <option value="DAIRY & CHEESE">DAIRY & CHEESE</option>
+            <option value="FRESH PRODUCE">FRESH PRODUCE</option>
+            <option value="MEATS & PROTEINS">MEATS & PROTEINS</option>
+            <option value="SEAFOOD">SEAFOOD</option>
+            <option value="DRY GOODS & PANTRY">DRY GOODS & PANTRY</option>
+            <option value="PAPER & SUPPLIES">PAPER & SUPPLIES</option>
+            <option value="SPICES & SEASONINGS">SPICES & SEASONINGS</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+        <div>
+          <label style="color:var(--text-muted);">Default Supplier:</label>
+          <select id="inv-edit-supplier" class="form-control">
+            <option value="EUCLID FISH">EUCLID FISH</option>
+            <option value="EURO">EURO</option>
+            <option value="STONE OVEN">STONE OVEN</option>
+            <option value="HILLCREST">HILLCREST</option>
+            <option value="HAZEROT">HAZEROT</option>
+            <option value="STONEY CREEK">STONEY CREEK</option>
+            <option value="MICHAELS MEATS">MICHAELS MEATS</option>
+            <option value="CANTONESE">CANTONESE</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+        <div>
+          <label style="color:var(--text-muted);">Order Size Unit:</label>
+          <input type="text" id="inv-edit-unit" class="form-control" placeholder="e.g. 5 lb, case, loaves">
+        </div>
+        <div>
+          <label style="color:var(--text-muted);">Par Level:</label>
+          <input type="number" step="0.1" id="inv-edit-par" class="form-control" placeholder="e.g. 6.0">
+        </div>
+      </div>
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted);">Notes:</label>
+      <input type="text" id="inv-edit-notes" class="form-control" placeholder="e.g. only order if hillcrest is out">
+
+      <div style="display:flex; gap:15px; margin-top:25px;">
+        <button class="btn btn-success" style="flex:1;" onclick="saveInventoryItem()">💾 Save Item</button>
+        <button class="btn btn-danger" id="btn-delete-inv-item" onclick="deleteInventoryItem()" style="display:none;">🗑️ Delete</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-edit-inventory')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT RECIPE MODAL -->
+  <div id="modal-edit-recipe" class="modal-overlay">
+    <div style="max-width:700px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:12px; border:1px solid var(--border-color); max-height:90vh; overflow-y:auto;">
+      <h2 id="recipe-edit-header" style="color:var(--accent-gold); margin-top:0;">Edit Recipe</h2>
+      <input type="hidden" id="recipe-edit-index">
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted);">Recipe Name:</label>
+      <input type="text" id="recipe-edit-name" class="form-control" placeholder="e.g. Pomodoro Sauce">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+        <div>
+          <label style="color:var(--text-muted);">Category:</label>
+          <input type="text" id="recipe-edit-category" class="form-control" placeholder="e.g. Sauces & Condiments">
+        </div>
+        <div>
+          <label style="color:var(--text-muted);">Yield / Notes:</label>
+          <input type="text" id="recipe-edit-notes" class="form-control" placeholder="e.g. Yield: 1 cambro">
+        </div>
+      </div>
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted);">Ingredients:</label>
+      <textarea id="recipe-edit-ingredients" class="form-control" style="height:120px; font-family:monospace;" placeholder="List ingredients line by line..."></textarea>
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted);">Method / Instructions:</label>
+      <textarea id="recipe-edit-method" class="form-control" style="height:120px; font-family:monospace;" placeholder="List preparation steps..."></textarea>
+
+      <div style="display:flex; gap:15px; margin-top:25px;">
+        <button class="btn btn-success" style="flex:1;" onclick="saveRecipeItem()">💾 Save Recipe</button>
+        <button class="btn btn-danger" id="btn-delete-recipe-item" onclick="deleteRecipeItem()" style="display:none;">🗑️ Delete</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-edit-recipe')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD VIP RESERVATION NOTE MODAL -->
+  <div id="modal-vip-reservation" class="modal-overlay">
+    <div style="max-width:500px; margin:40px auto; background:var(--card-bg); padding:25px; border-radius:16px; border:1px solid var(--border-color); box-shadow: 0 12px 35px rgba(0,0,0,0.6);">
+      <h2 style="color:var(--accent-gold); margin-top:0;">⭐ Add VIP / Big Reservation Note</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem;">Log big party reservations, VIP dining alerts, or special timing notes relayed from FOH.</p>
+
+      <label style="display:block; margin-top:15px; color:var(--accent-blue); font-weight:bold;">Party / Guest Name or Details:</label>
+      <input type="text" id="vip-name-input" class="form-control" placeholder="e.g. Smith Party / VIP Guest">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+        <div>
+          <label style="color:var(--text-muted); font-size:0.9rem;">Time:</label>
+          <input type="text" id="vip-time-input" class="form-control" placeholder="e.g. 6:00 PM">
+        </div>
+        <div>
+          <label style="color:var(--text-muted); font-size:0.9rem;">Party Size / Table:</label>
+          <input type="text" id="vip-size-input" class="form-control" placeholder="e.g. 30 top / Main Room">
+        </div>
+      </div>
+
+      <label style="display:block; margin-top:15px; color:var(--text-muted); font-size:0.9rem;">Special Notes / Dietary / Requirements:</label>
+      <textarea id="vip-notes-input" class="msg-textarea" style="height:70px; margin-top:5px;" placeholder="e.g. Prix-fixe menu, 2 GF guests, pre-plated dessert..."></textarea>
+
+      <div style="display:flex; gap:12px; margin-top:20px;">
+        <button class="btn btn-success" style="flex:1; padding:12px;" onclick="saveVipNote()">✓ Save Reservation Note</button>
+        <button class="btn btn-secondary" style="flex:1; padding:12px;" onclick="closeModal('modal-vip-reservation')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULK INVENTORY IMPORT MODAL -->
+  <div id="modal-bulk-inventory" class="modal-overlay">
+    <div style="max-width:750px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:12px; border:1px solid var(--border-color); max-height:90vh; overflow-y:auto;">
+      <h2 style="color:var(--accent-gold); margin-top:0;">📋 Bulk Import Inventory Items</h2>
+      <p style="color:var(--text-muted); font-size:1.1rem; line-height:1.5;">
+        Quickly update or replace your inventory list for seasonal menu changes. Upload a <strong>.CSV</strong> file or paste spreadsheet rows directly from Google Sheets / Excel below!
+      </p>
+
+      <div style="background:#2a2a2a; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #444;">
+        <strong style="color:var(--accent-blue);">Expected CSV Header Format:</strong>
+        <code style="display:block; margin-top:6px; color:var(--accent-gold); font-size:0.95rem;">ITEM NAME, ORDER SIZE, COUNT, PAR SIZED, PAR, NOTES, CATEGORY, SUPPLIER</code>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:bold; color:#fff; display:block; margin-bottom:8px;">Option 1: Upload CSV File</label>
+        <input type="file" id="bulk-inv-file" class="form-control" accept=".csv" onchange="handleBulkInventoryFile(event)">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:bold; color:#fff; display:block; margin-bottom:8px;">Option 2: Paste CSV / Spreadsheet Rows</label>
+        <textarea id="bulk-inv-paste-input" class="form-control" style="height:160px; font-family:monospace; font-size:0.95rem;" placeholder="Paste rows from Google Sheets or Excel here..."></textarea>
+      </div>
+
+      <div style="display:flex; gap:15px; margin-top:25px;">
+        <button class="btn btn-success" style="flex:1;" onclick="submitBulkInventoryImport(false)">➕ Merge & Add to Inventory</button>
+        <button class="btn btn-warning" style="flex:1;" onclick="submitBulkInventoryImport(true)">⚠️ Replace Entire Inventory</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-bulk-inventory')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULK RECIPE IMPORT MODAL -->
+  <div id="modal-bulk-recipes" class="modal-overlay">
+    <div style="max-width:750px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:12px; border:1px solid var(--border-color); max-height:90vh; overflow-y:auto;">
+      <h2 style="color:var(--accent-gold); margin-top:0;">📋 Bulk Import Recipes</h2>
+      <p style="color:var(--text-muted); font-size:1.1rem; line-height:1.5;">
+        Upload a <strong>.CSV</strong> file or paste spreadsheet rows directly from Google Sheets / Excel to import multiple seasonal recipes at once!
+      </p>
+
+      <div style="background:#2a2a2a; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #444;">
+        <strong style="color:var(--accent-blue);">Expected CSV Header Format:</strong>
+        <code style="display:block; margin-top:6px; color:var(--accent-gold); font-size:0.95rem;">Recipe Name, Category, Ingredients, Method, Yield/Notes</code>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:bold; color:#fff; display:block; margin-bottom:8px;">Option 1: Upload CSV File</label>
+        <input type="file" id="bulk-recipe-file" class="form-control" accept=".csv" onchange="handleBulkRecipeFile(event)">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:bold; color:#fff; display:block; margin-bottom:8px;">Option 2: Paste CSV / Spreadsheet Rows</label>
+        <textarea id="bulk-recipe-paste-input" class="form-control" style="height:160px; font-family:monospace; font-size:0.95rem;" placeholder="Paste recipe rows from Google Sheets or Excel here..."></textarea>
+      </div>
+
+      <div style="display:flex; gap:15px; margin-top:25px;">
+        <button class="btn btn-success" style="flex:1;" onclick="submitBulkRecipeImport(false)">➕ Merge & Add Recipes</button>
+        <button class="btn btn-warning" style="flex:1;" onclick="submitBulkRecipeImport(true)">⚠️ Replace All Recipes</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-bulk-recipes')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM LOGO UPLOAD MODAL -->
+  <div id="modal-custom-logos" class="modal-overlay">
+    <div style="max-width:600px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:12px; border:1px solid var(--border-color);">
+      <h2 style="color:var(--accent-gold); margin-top:0;">🖼️ Custom Menu Logos</h2>
+      <p style="color:var(--text-muted); font-size:1.1rem; line-height:1.5;">
+        Upload your custom logo images to replace the top header logo and bottom circle badge logo on all printouts.
+      </p>
+
+      <div style="margin-bottom:20px; background:#262626; padding:15px; border-radius:8px;">
+        <label style="font-weight:bold; color:var(--accent-blue); display:block; margin-bottom:8px;">Top Header Logo Image:</label>
+        <input type="file" id="logo-header-file" class="form-control" accept="image/*" onchange="uploadCustomLogo('header', event)">
+        <div id="logo-header-preview" style="margin-top:10px;"></div>
+      </div>
+
+      <div style="margin-bottom:20px; background:#262626; padding:15px; border-radius:8px;">
+        <label style="font-weight:bold; color:var(--accent-blue); display:block; margin-bottom:8px;">Bottom Badge Logo Image:</label>
+        <input type="file" id="logo-badge-file" class="form-control" accept="image/*" onchange="uploadCustomLogo('badge', event)">
+        <div id="logo-badge-preview" style="margin-top:10px;"></div>
+      </div>
+
+      <div style="display:flex; gap:15px; margin-top:25px;">
+        <button class="btn btn-danger" style="flex:1;" onclick="resetCustomLogos()">Reset to Default Vector Logos</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-custom-logos')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEANING TASK & CHEF VERIFICATION PIN MODAL -->
+  <div id="modal-cleaning-pin" class="modal-overlay">
+    <div style="max-width:440px; margin:40px auto; background:var(--card-bg); padding:25px; border-radius:16px; border:1px solid var(--border-color); text-align:center; box-shadow: 0 12px 35px rgba(0,0,0,0.6);">
+      <div id="cleaning-pin-icon" style="font-size:3rem; margin-bottom:6px;">🔑</div>
+      <h2 id="cleaning-pin-title" style="color:var(--accent-gold); margin:0 0 8px 0; font-size:1.5rem;">Enter Staff PIN</h2>
+      <div id="cleaning-pin-subtitle" style="color:var(--text-muted); font-size:1rem; margin-bottom:18px;">
+        Enter your staff PIN to log completed task under your name
+      </div>
+
+      <div style="margin-bottom:15px;">
+        <input type="password" id="cleaning-pin-input" class="pin-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="•••" style="margin:0 auto 6px auto; font-size:2.2rem; width:180px; letter-spacing:10px; display:block;" onkeydown="handleCleaningPinKeyDown(event)">
+        <div id="cleaning-pin-error" style="color:var(--accent-red); font-weight:bold; min-height:22px; font-size:0.95rem;"></div>
+      </div>
+
+      <!-- KEYPAD GRID -->
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; max-width:280px; margin:0 auto 20px auto;">
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('1')">1</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('2')">2</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('3')">3</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('4')">4</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('5')">5</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('6')">6</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('7')">7</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('8')">8</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('9')">9</button>
+        <button class="btn btn-warning" style="font-size:1.2rem; padding:12px; border-radius:8px;" onclick="cleaningPinClear()">⌫</button>
+        <button class="btn btn-secondary" style="font-size:1.4rem; padding:12px; border-radius:8px;" onclick="cleaningPinAppend('0')">0</button>
+        <button class="btn btn-success" style="font-size:1.3rem; padding:12px; border-radius:8px;" onclick="submitCleaningPin()">✓</button>
+      </div>
+
+      <div style="display:flex; gap:12px;">
+        <button class="btn btn-success" style="flex:1; font-size:1.1rem; padding:10px;" onclick="submitCleaningPin()">Submit PIN</button>
+        <button class="btn btn-secondary" style="flex:1; font-size:1.1rem; padding:10px;" onclick="closeModal('modal-cleaning-pin')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KITCHEN MULTI-TIMER SUITE MODAL -->
+  <div id="modal-kitchen-timers" class="modal-overlay">
+    <div style="max-width:650px; margin:30px auto; background:var(--card-bg); padding:24px; border-radius:18px; border:2px solid var(--accent-gold); box-shadow: 0 16px 45px rgba(0,0,0,0.8); max-height:90vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444; padding-bottom:12px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:2rem;">⏱️</span>
+          <div>
+            <h2 style="margin:0; color:var(--accent-gold); font-size:1.5rem;">Kitchen Multi-Timer Suite</h2>
+            <div style="font-size:0.85rem; color:var(--text-muted);">Baking, Prep & Line Timers with Sound Alarms</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="closeModal('modal-kitchen-timers')" style="padding:4px 12px; font-size:1.2rem;">&times;</button>
+      </div>
+
+      <!-- SOUND TEST & SPEAKER ALERT BUTTON -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px 14px; border-radius:10px; margin-bottom:18px; border:1px solid #333;">
+        <div style="font-size:0.9rem; color:#aaa;">
+          🔊 <strong>Toast KDS Audio Alarm Test:</strong> Warm up speaker sound
+        </div>
+        <button class="btn btn-warning" style="padding:4px 12px; font-size:0.85rem;" onclick="testKitchenAlarmSound()">🔔 Test Sound</button>
+      </div>
+
+      <!-- QUICK PRESETS -->
+      <div style="margin-bottom:20px;">
+        <label style="font-weight:bold; color:var(--accent-blue); display:block; margin-bottom:8px; font-size:0.95rem;">⚡ Quick Minute Presets:</label>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:8px;">
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('5 min Timer', 5)">⏱️ 5 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('10 min Timer', 10)">⏱️ 10 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('15 min Timer', 15)">⏱️ 15 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('20 min Timer', 20)">⏱️ 20 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('25 min Timer', 25)">⏱️ 25 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('30 min Timer', 30)">⏱️ 30 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('45 min Timer', 45)">⏱️ 45 Min</button>
+          <button class="btn btn-secondary" style="font-size:0.9rem; padding:8px 4px; font-weight:bold;" onclick="addQuickKitchenTimer('60 min Timer', 60)">⏱️ 60 Min</button>
+        </div>
+      </div>
+
+      <!-- CUSTOM TIMER CREATION FORM -->
+      <div style="background:#262626; padding:14px; border-radius:10px; margin-bottom:20px; border:1px solid #444;">
+        <label style="font-weight:bold; color:var(--accent-gold); display:block; margin-bottom:8px;">➕ Create Custom Kitchen Timer:</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="custom-timer-name" class="search-input" placeholder="Timer label (e.g. Bread in Oven)" style="flex:2; min-width:160px; padding:6px 10px;">
+          <input type="number" id="custom-timer-min" class="search-input" placeholder="Min" min="0" max="600" style="width:75px; text-align:center; padding:6px;">
+          <input type="number" id="custom-timer-sec" class="search-input" placeholder="Sec" min="0" max="59" style="width:75px; text-align:center; padding:6px;">
+          <button class="btn btn-success" style="padding:6px 14px; font-weight:bold;" onclick="createCustomKitchenTimer()">Start Timer</button>
+        </div>
+      </div>
+
+      <!-- ACTIVE TIMERS LIST -->
+      <div style="margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h3 style="margin:0; color:var(--text-main); font-size:1.1rem;">Running Kitchen Timers</h3>
+          <button class="btn btn-danger" style="font-size:0.8rem; padding:4px 8px;" onclick="clearAllKitchenTimers()">Clear All</button>
+        </div>
+        <div id="active-timers-container" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div style="text-align:right; margin-top:20px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-kitchen-timers')">Done & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPIRED ALARM OVERLAY MODAL -->
+  <div id="modal-timer-alarm" class="modal-overlay" style="z-index:99999;">
+    <div style="max-width:500px; margin:60px auto; background:#3a0707; padding:30px; border-radius:20px; border:3px solid var(--accent-red); text-align:center; box-shadow: 0 0 60px rgba(239,83,80,0.8);">
+      <div style="font-size:4rem; margin-bottom:10px;">🚨 ⏱️ 🔔</div>
+      <h1 style="color:#fff; margin:0 0 10px 0; font-size:2rem; text-shadow:0 0 10px var(--accent-red);">TIMER EXPIRED!</h1>
+      <div id="alarm-timer-label" style="font-size:1.6rem; color:var(--accent-gold); font-weight:bold; margin-bottom:20px;">
+        Kitchen Timer
+      </div>
+      <button class="btn btn-success" style="font-size:1.5rem; padding:14px 28px; width:100%; border-radius:12px; font-weight:900; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" onclick="dismissKitchenAlarm()">
+        🔕 DISMISS ALARM
+      </button>
+    </div>
+  </div>
+
+  <!-- FIREBASE REALTIME DATABASE SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

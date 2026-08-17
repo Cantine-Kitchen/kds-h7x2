@@ -1,0 +1,12 @@
+﻿Name,Pin,Active,Role
+"Test Chef","123","True","head_chef"
+"Chef","217","True","head_chef"
+"Line Cooks","555","True","cook"
+"Adam Butausku","547","True","cook"
+"Josue Corzo","754","True","cook"
+"Raymel Franklin","309","True","cook"
+"Bobby Lantz","225","True","cook"
+"Joe Dotterweich","415","True","cook"
+"Alan Gurecki","553","True","cook"
+"Nate Runyon","410","True","cook"
+"CJ Tolley","351","True","cook"

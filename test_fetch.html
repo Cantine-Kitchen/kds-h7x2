@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>API Test</title></head>
+<body style="background:#121212; color:#fff; font-family:sans-serif; padding:20px;">
+  <h2>Testing Live Google Sheets API...</h2>
+  <div id="output" style="font-size:1.2rem; background:#1e1e1e; padding:20px; border-radius:10px; white-space:pre-wrap;">Connecting...</div>
+
+  <script>
+    const url = 'https://script.google.com/macros/s/AKfycbzwC97-8v1ZvaTU7l0JapGtSj7r-b54fcH-kR7Rvu6QKmnnMcbIXUU1SsillriD91YeEA/exec?action=api';
+    
+    fetch(url, { method: 'GET', redirect: 'follow' })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('output').innerText = "SUCCESS!\n" + JSON.stringify(data.schedule, null, 2);
+      })
+      .catch(err => {
+        document.getElementById('output').innerText = "FETCH ERROR: " + err.toString() + "\n\nTrying JSONP fallback...";
+        
+        // JSONP Fallback
+        const cbName = 'testCb_' + Date.now();
+        window[cbName] = function(data) {
+          document.getElementById('output').innerText = "JSONP SUCCESS!\n" + JSON.stringify(data.schedule, null, 2);
+        };
+        const s = document.createElement('script');
+        s.src = url + '&callback=' + cbName;
+        document.head.appendChild(s);
+      });
+  </script>
+</body>
+</html>
