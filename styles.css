@@ -841,7 +841,7 @@ select.form-control {
 .flight-mat-page {
   width: 100vw;
   height: 100vh;
-  padding: 0.3in 0.4in;
+  padding: 0.15in 0.25in;
   box-sizing: border-box;
   background: #fdfbf7;
   color: #111;
@@ -852,13 +852,13 @@ select.form-control {
 }
 
 .flight-mat-half {
-  height: 48%;
+  height: 49%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  padding: 10px 0;
+  padding: 6px 0;
   border-bottom: 2px dashed #aaa;
 }
 
@@ -868,10 +868,10 @@ select.form-control {
 
 .flight-circles-grid {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .flight-circle-box {
@@ -881,18 +881,22 @@ select.form-control {
 }
 
 .flight-circle {
-  width: 130px;
-  height: 130px;
+  width: 240px;
+  height: 240px;
   border-radius: 50%;
-  background: #5b82b5;
-  color: #000;
+  border: 6px solid #5c80b4;
+  background: rgba(92, 128, 180, 0.05);
+  color: #5c80b4;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: sans-serif;
-  font-size: 80px;
-  font-weight: normal;
-  margin-bottom: 12px;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
+  font-size: 110px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .flight-wine-name {

@@ -3294,12 +3294,12 @@ function saveDaily3ColumnChanges(dayKey, showAlert = true) {
   }
 }
 
-function saveThursdayFlightMatChanges() {
+function saveThursdayFlightMatChanges(showAlert = true) {
   const dsAll = getFiveDailySpecials();
   if (!dsAll.thu) dsAll.thu = JSON.parse(JSON.stringify(defaultFiveDailySpecials.thu));
 
   (dsAll.thu.wines || []).forEach((w, idx) => {
-  const wEl = document.getElementById(`thu-wine-${idx}`);
+    const wEl = document.getElementById(`thu-wine-${idx}`);
     if (wEl) w.name = wEl.value.trim();
   });
 
@@ -3307,7 +3307,9 @@ function saveThursdayFlightMatChanges() {
   if (tapasEl) dsAll.thu.tapas = tapasEl.value.trim();
 
   saveMasterData();
-  alert('SUCCESS! Thursday Wine Flight Mat saved!');
+  if (showAlert) {
+    alert('SUCCESS! Thursday Wine Flight Mat saved!');
+  }
 }
 
 function setDynamicPrintPageStyle(sizeRule) {
@@ -3765,7 +3767,8 @@ function resetCustomLogos() {
 }
 
 function generateThursdayWineFlightPrint() {
-  saveThursdayFlightMatChanges();
+  setDynamicPrintPageStyle('11in 8.5in landscape');
+  saveThursdayFlightMatChanges(false);
   const dsAll = getFiveDailySpecials();
   const thu = dsAll.thu || defaultFiveDailySpecials.thu;
   const printArea = document.getElementById('print-area');
@@ -3801,7 +3804,9 @@ function generateThursdayWineFlightPrint() {
     </div>
   `;
 
-  window.print();
+  waitForImagesToLoad(printArea, () => {
+    window.print();
+  });
 }
 
 // -------------------------------------------------------------
