@@ -3408,15 +3408,15 @@ function renderLegalMainMenuDOM() {
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
               <img src="${badgeLogoUrl}" style="width:50px; height:50px; object-fit:contain;">
               <div style="text-align:right;">
-                <div style="font-size:9px; font-weight:bold; display:flex; gap:6px; justify-content:flex-end; align-items:center; font-family:'Outfit', 'Cinzel', sans-serif;">
+                <div style="font-size:9px; font-weight:bold; display:flex; gap:6px; justify-content:flex-end; align-items:center; font-family:'Jadeite', 'Outfit', 'Cinzel', sans-serif;">
                   ${fbIcon} cantinebar &nbsp; ${igIcon} cantine_bar
                 </div>
-                <div style="font-size:9px; font-weight:bold; color:#c85c33; margin-top:1px; font-family:'Outfit', 'Cinzel', sans-serif;">
+                <div style="font-size:9px; font-weight:bold; color:#c85c33; margin-top:1px; font-family:'Jadeite', 'Outfit', 'Cinzel', sans-serif;">
                   Summer 2026 &nbsp;|&nbsp; Executive Chef - Michael Booth &nbsp;|&nbsp; General Manager - Jessica Kerlin
                 </div>
               </div>
             </div>
-            <div style="font-size:7.5px; color:#444; line-height:1.15; text-align:center; margin-top:3px; font-family:'Playfair Display', 'Cormorant Garamond', Georgia, serif;">
+            <div style="font-size:7.5px; color:#444; line-height:1.15; text-align:center; margin-top:3px; font-family:'MixSerif', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;">
               **Our kitchen uses, milk, eggs, dairy, wheat, soy, tree nuts, fish, shellfish and sesame. Please inform your server of any allergies.<br>
               *Consuming raw or undercooked meats, poultry, seafood, shellfish or eggs may increase your risk of foodborne illness.
             </div>
@@ -3441,8 +3441,8 @@ function renderLegalMainMenuDOM() {
           ${renderSection("BUBBLES", mm.bubbles)}
 
           <div style="margin-top:auto; border:2px solid #000; padding:6px; text-align:center; background:#fafafa;">
-            <h4 style="margin:0 0 3px 0; color:#c85c33; font-family:'Outfit', 'Cinzel', sans-serif; font-size:12px; letter-spacing:2px;">CANTINE DAILY</h4>
-            <div style="font-family:'Playfair Display', 'Cormorant Garamond', Georgia, serif; font-size:9px; line-height:1.3; color:#111; font-weight:bold;">
+            <h4 style="margin:0 0 3px 0; color:#c85c33; font-family:'Jadeite', 'Outfit', 'Cinzel', sans-serif; font-size:12px; letter-spacing:2px;">CANTINE DAILY</h4>
+            <div style="font-family:'MixSerif', 'Playfair Display', 'Cormorant Garamond', Georgia, serif; font-size:9px; line-height:1.3; color:#111; font-weight:bold;">
               sunday: brunch 11-3pm<br>
               monday: no corking fee; $9 wings<br>
               tuesday: $3 taco; margarita and beer specials<br>
