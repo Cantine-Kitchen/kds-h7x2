@@ -3174,8 +3174,8 @@ function renderThursdayFlightMatEditor(container) {
   let html = `
     <div style="background:var(--card-bg); padding:20px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:25px;">
       <h3 style="margin:0 0 15px 0; color:var(--accent-gold); text-transform:uppercase;">🍷 Thursday Wine Tasting & Tapas Flight Mat Editor</h3>
-      <p style="color:var(--text-muted); font-size:1.1rem; line-height:1.5;">
-        Matches your <strong>shared wine flight.pdf</strong>! Customizes the 4 numbered wine flight circles (1, 2, 3, 4) and the Tapas Pairing banner text.
+      <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.5;">
+        Customize the 4 numbered wine flight circles (1, 2, 3, 4) and the Tapas Pairing banner text for Thursday printouts.
       </p>
 
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin-bottom:20px;">
